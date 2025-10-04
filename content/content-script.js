@@ -74,9 +74,6 @@ class DocWeaverContentScript {
           <button class="fab-action" id="fab-generate" title="Generate PDF">✨ Create</button>
           <button class="fab-action" id="fab-hide" title="Hide FAB">👁️‍🗨️ Hide</button>
         </div>
-        <div class="fab-hide-indicator" id="fab-hide-indicator" style="display: none;">
-          <span class="hide-icon">👁️‍🗨️</span>
-        </div>
       </div>
     `;
     
@@ -90,28 +87,15 @@ class DocWeaverContentScript {
     const viewButton = this.fab.getElementById('fab-view');
     const generateButton = this.fab.getElementById('fab-generate');
     const hideButton = this.fab.getElementById('fab-hide');
-    const hideIndicator = this.fab.getElementById('fab-hide-indicator');
     
     mainButton.addEventListener('click', () => this.toggleActive());
     addButton.addEventListener('click', () => this.showCaptureModal());
     viewButton.addEventListener('click', () => this.openSidebar());
     generateButton.addEventListener('click', () => this.generatePDF());
     hideButton.addEventListener('click', () => this.hideFAB());
-    hideIndicator.addEventListener('click', () => this.showFAB());
   }
   
   setupHideShowFeatures() {
-    // Add mouse movement detection for auto-hide
-    let mouseTimer;
-    document.addEventListener('mousemove', () => {
-      if (this.isHidden) {
-        clearTimeout(mouseTimer);
-        mouseTimer = setTimeout(() => {
-          this.showFAB();
-        }, 2000); // Show after 2 seconds of mouse movement
-      }
-    });
-    
     // Add keyboard shortcut for hide/show
     document.addEventListener('keydown', (e) => {
       if (e.altKey && e.shiftKey && e.key.toLowerCase() === 'h') {
@@ -127,24 +111,41 @@ class DocWeaverContentScript {
   
   hideFAB() {
     const container = document.getElementById('docweaver-container');
-    const hideIndicator = this.fab.getElementById('fab-hide-indicator');
     
-    if (container && hideIndicator) {
+    if (container) {
       this.isHidden = true;
       container.style.display = 'none';
-      hideIndicator.style.display = 'block';
-      this.showToast('FAB hidden. Move mouse or press Alt+Shift+H to show', 'info', 3000);
+      
+      // Create hide indicator if it doesn't exist
+      let hideIndicator = document.getElementById('fab-hide-indicator');
+      if (!hideIndicator) {
+        hideIndicator = document.createElement('div');
+        hideIndicator.id = 'fab-hide-indicator';
+        hideIndicator.className = 'fab-hide-indicator';
+        hideIndicator.innerHTML = '<span class="hide-icon">👁️‍🗨️</span>';
+        document.body.appendChild(hideIndicator);
+        
+        // Add click event to show FAB
+        hideIndicator.addEventListener('click', () => this.showFAB());
+      }
+      
+      hideIndicator.style.display = 'flex';
+      this.showToast('FAB hidden. Click the eye icon or press Alt+Shift+H to show', 'info', 3000);
     }
   }
   
   showFAB() {
     const container = document.getElementById('docweaver-container');
-    const hideIndicator = this.fab.getElementById('fab-hide-indicator');
+    const hideIndicator = document.getElementById('fab-hide-indicator');
     
-    if (container && hideIndicator) {
+    if (container) {
       this.isHidden = false;
       container.style.display = 'block';
-      hideIndicator.style.display = 'none';
+      
+      if (hideIndicator) {
+        hideIndicator.style.display = 'none';
+      }
+      
       this.showToast('FAB shown', 'success', 2000);
     }
   }
@@ -193,6 +194,11 @@ class DocWeaverContentScript {
   }
   
   toggleActive() {
+    // Don't toggle if FAB is hidden
+    if (this.isHidden) {
+      return;
+    }
+    
     this.isActive = !this.isActive;
     this.updateFABDisplay();
     
@@ -204,6 +210,11 @@ class DocWeaverContentScript {
   }
   
   updateFABDisplay() {
+    // Don't update display if FAB is hidden
+    if (this.isHidden) {
+      return;
+    }
+    
     const mainButton = this.fab.getElementById('fab-main');
     const actionsContainer = this.fab.getElementById('fab-actions');
     const counter = this.fab.getElementById('fab-counter');
@@ -219,6 +230,12 @@ class DocWeaverContentScript {
   }
   
   showCaptureModal() {
+    // Don't show modal if FAB is hidden
+    if (this.isHidden) {
+      this.showToast('FAB is hidden. Click the eye icon or press Alt+Shift+H to show', 'warning');
+      return;
+    }
+    
     if (!this.isActive) {
       this.toggleActive();
     }

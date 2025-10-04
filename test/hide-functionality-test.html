@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DocWeaver Hide Functionality Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f8fafc;
+        }
+        
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .test-title {
+            color: #6366f1;
+            margin-bottom: 15px;
+        }
+        
+        .test-steps {
+            background: #ecfdf5;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #10b981;
+        }
+        
+        .test-step {
+            margin: 10px 0;
+            padding: 8px;
+            background: white;
+            border-radius: 4px;
+            border: 1px solid #d1fae5;
+        }
+        
+        .status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        
+        .status.pass {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .status.fail {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .status.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .test-content {
+            margin: 20px 0;
+        }
+        
+        .highlight {
+            background: #fef3c7;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 DocWeaver Hide Functionality Test</h1>
+    <p>This page tests the hide/show functionality of the DocWeaver FAB.</p>
+    
+    <div class="test-section">
+        <h2 class="test-title">📋 Hide/Show Test Steps</h2>
+        <div class="test-steps">
+            <div class="test-step">
+                <strong>Step 1:</strong> Look for the DocWeaver FAB (floating button) in the bottom-right corner
+                <span class="status pending" id="fab-visible-status">Pending</span>
+            </div>
+            <div class="test-step">
+                <strong>Step 2:</strong> Click the FAB to expand it and see the "Hide" button
+                <span class="status pending" id="fab-expand-status">Pending</span>
+            </div>
+            <div class="test-step">
+                <strong>Step 3:</strong> Click the "Hide" button (👁️‍🗨️ Hide)
+                <span class="status pending" id="hide-click-status">Pending</span>
+            </div>
+            <div class="test-step">
+                <strong>Step 4:</strong> Verify the FAB disappears and a small eye icon appears
+                <span class="status pending" id="fab-hidden-status">Pending</span>
+            </div>
+            <div class="test-step">
+                <strong>Step 5:</strong> Click the eye icon to show the FAB again
+                <span class="status pending" id="show-click-status">Pending</span>
+            </div>
+            <div class="test-step">
+                <strong>Step 6:</strong> Verify the FAB reappears and the eye icon disappears
+                <span class="status pending" id="fab-shown-status">Pending</span>
+            </div>
+            <div class="test-step">
+                <strong>Step 7:</strong> Test keyboard shortcut: Press <span class="highlight">Alt+Shift+H</span> to hide
+                <span class="status pending" id="keyboard-hide-status">Pending</span>
+            </div>
+            <div class="test-step">
+                <strong>Step 8:</strong> Press <span class="highlight">Alt+Shift+H</span> again to show
+                <span class="status pending" id="keyboard-show-status">Pending</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2 class="test-title">🎯 Expected Behavior</h2>
+        <div class="test-content">
+            <h3>When Hidden:</h3>
+            <ul>
+                <li>✅ FAB should completely disappear</li>
+                <li>✅ Small eye icon (👁️‍🗨️) should appear in bottom-right corner</li>
+                <li>✅ Eye icon should be clickable to show FAB</li>
+                <li>✅ FAB should stay hidden until manually shown</li>
+                <li>✅ No auto-show on mouse movement</li>
+            </ul>
+            
+            <h3>When Shown:</h3>
+            <ul>
+                <li>✅ FAB should reappear in original position</li>
+                <li>✅ Eye icon should disappear</li>
+                <li>✅ FAB should be fully functional</li>
+                <li>✅ All buttons should work normally</li>
+            </ul>
+            
+            <h3>Keyboard Shortcuts:</h3>
+            <ul>
+                <li>✅ <span class="highlight">Alt+Shift+H</span> should toggle hide/show</li>
+                <li>✅ Should work from any page state</li>
+                <li>✅ Should provide visual feedback</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2 class="test-title">🐛 Common Issues to Check</h2>
+        <div class="test-content">
+            <h3>Issue 1: FAB doesn't stay hidden</h3>
+            <p><strong>Symptoms:</strong> FAB reappears automatically after hiding</p>
+            <p><strong>Cause:</strong> Auto-show on mouse movement is interfering</p>
+            <p><strong>Fix:</strong> Remove mouse movement detection</p>
+            
+            <h3>Issue 2: Eye icon doesn't appear</h3>
+            <p><strong>Symptoms:</strong> FAB disappears but no eye icon shows</p>
+            <p><strong>Cause:</strong> Hide indicator not being created properly</p>
+            <p><strong>Fix:</strong> Ensure hide indicator is created dynamically</p>
+            
+            <h3>Issue 3: Eye icon not clickable</h3>
+            <p><strong>Symptoms:</strong> Eye icon appears but clicking doesn't show FAB</p>
+            <p><strong>Cause:</strong> Event listener not attached</p>
+            <p><strong>Fix:</strong> Add click event listener to hide indicator</p>
+            
+            <h3>Issue 4: Keyboard shortcut doesn't work</h3>
+            <p><strong>Symptoms:</strong> Alt+Shift+H doesn't toggle hide/show</p>
+            <p><strong>Cause:</strong> Keyboard event listener not working</p>
+            <p><strong>Fix:</strong> Check event listener setup</p>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2 class="test-title">📊 Test Results</h2>
+        <div class="test-content">
+            <p>Use this section to track your test results:</p>
+            <ul>
+                <li>✅ <strong>Pass:</strong> Functionality works as expected</li>
+                <li>❌ <strong>Fail:</strong> Functionality doesn't work</li>
+                <li>⚠️ <strong>Partial:</strong> Some aspects work, others don't</li>
+            </ul>
+            
+            <h3>Test Summary:</h3>
+            <p id="test-summary">Run the tests above and update the status indicators.</p>
+        </div>
+    </div>
+    
+    <script>
+        // Monitor for DocWeaver events and update test status
+        let testResults = {
+            fabVisible: false,
+            fabExpand: false,
+            hideClick: false,
+            fabHidden: false,
+            showClick: false,
+            fabShown: false,
+            keyboardHide: false,
+            keyboardShow: false
+        };
+        
+        function updateTestStatus(testId, passed) {
+            const statusElement = document.getElementById(testId + '-status');
+            if (statusElement) {
+                if (passed) {
+                    statusElement.textContent = 'Pass';
+                    statusElement.className = 'status pass';
+                } else {
+                    statusElement.textContent = 'Fail';
+                    statusElement.className = 'status fail';
+                }
+            }
+        }
+        
+        // Check if FAB is visible
+        function checkFABVisibility() {
+            const fab = document.querySelector('#docweaver-container');
+            const isVisible = fab && fab.style.display !== 'none';
+            updateTestStatus('fab-visible', isVisible);
+            testResults.fabVisible = isVisible;
+        }
+        
+        // Check if hide indicator is visible
+        function checkHideIndicator() {
+            const hideIndicator = document.getElementById('fab-hide-indicator');
+            const isVisible = hideIndicator && hideIndicator.style.display !== 'none';
+            updateTestStatus('fab-hidden', isVisible);
+            testResults.fabHidden = isVisible;
+        }
+        
+        // Monitor for changes
+        const observer = new MutationObserver(() => {
+            checkFABVisibility();
+            checkHideIndicator();
+        });
+        
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true,
+            attributes: true,
+            attributeFilter: ['style', 'class']
+        });
+        
+        // Initial check
+        setTimeout(() => {
+            checkFABVisibility();
+            checkHideIndicator();
+        }, 1000);
+        
+        // Listen for keyboard events
+        document.addEventListener('keydown', (e) => {
+            if (e.altKey && e.shiftKey && e.key.toLowerCase() === 'h') {
+                if (testResults.fabVisible) {
+                    updateTestStatus('keyboard-hide', true);
+                    testResults.keyboardHide = true;
+                } else {
+                    updateTestStatus('keyboard-show', true);
+                    testResults.keyboardShow = true;
+                }
+            }
+        });
+        
+        // Update test summary
+        setInterval(() => {
+            const passedTests = Object.values(testResults).filter(Boolean).length;
+            const totalTests = Object.keys(testResults).length;
+            const summary = `Tests passed: ${passedTests}/${totalTests}`;
+            document.getElementById('test-summary').textContent = summary;
+        }, 1000);
+    </script>
+</body>
+</html>
