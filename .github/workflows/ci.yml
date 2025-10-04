@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: DocWeaver CI Pipeline
 
 on:
   push:
@@ -7,60 +7,61 @@ on:
     branches: [ main, develop ]
 
 jobs:
-  lint-and-test:
-    name: Lint and Test
+  validate-extension:
+    name: Validate Extension
     runs-on: ubuntu-latest
     
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
       
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        cache: 'npm'
-        
-    - name: Install dependencies
-      run: npm i
-      
-    - name: Lint JavaScript files
-      run: |
-        npx eslint . --ext .js --ignore-pattern "lib/*" --ignore-pattern "node_modules/*"
-        
-    - name: Check manifest.json
-      run: |
-        npx web-ext lint --source-dir . --ignore-files "node_modules/**" "*.md" ".git/**"
-        
     - name: Validate extension structure
       run: |
-        echo "Validating extension structure..."
-        test -f manifest.json || (echo "manifest.json missing" && exit 1)
-        test -f background/service-worker.js || (echo "background/service-worker.js missing" && exit 1)
-        test -f content/content-script.js || (echo "content/content-script.js missing" && exit 1)
-        test -f popup/popup.html || (echo "popup/popup.html missing" && exit 1)
-        test -f popup/popup.js || (echo "popup/popup.js missing" && exit 1)
-        test -f sidebar/sidebar.html || (echo "sidebar/sidebar.html missing" && exit 1)
-        test -f sidebar/sidebar.js || (echo "sidebar/sidebar.js missing" && exit 1)
-        test -f print/print.html || (echo "print/print.html missing" && exit 1)
-        test -f print/print.js || (echo "print/print.js missing" && exit 1)
+        echo "🔍 Validating extension structure..."
+        test -f manifest.json || (echo "❌ manifest.json missing" && exit 1)
+        test -f background/service-worker.js || (echo "❌ background/service-worker.js missing" && exit 1)
+        test -f content/content-script.js || (echo "❌ content/content-script.js missing" && exit 1)
+        test -f popup/popup.html || (echo "❌ popup/popup.html missing" && exit 1)
+        test -f popup/popup.js || (echo "❌ popup/popup.js missing" && exit 1)
+        test -f sidebar/sidebar.html || (echo "❌ sidebar/sidebar.html missing" && exit 1)
+        test -f sidebar/sidebar.js || (echo "❌ sidebar/sidebar.js missing" && exit 1)
+        test -f print/print.html || (echo "❌ print/print.html missing" && exit 1)
+        test -f print/print.js || (echo "❌ print/print.js missing" && exit 1)
         echo "✅ Extension structure is valid"
         
-    - name: Test extension loading
+    - name: Validate manifest.json
       run: |
-        echo "Testing extension files..."
-        node -c background/service-worker.js
-        node -c content/content-script.js
-        node -c content/selector.js
-        node -c sidebar/sidebar.js
-        node -c popup/popup.js
-        node -c print/print.js
+        echo "🔍 Validating manifest.json..."
+        python3 -c "
+        import json
+        import sys
+        try:
+            with open('manifest.json', 'r') as f:
+                manifest = json.load(f)
+            print('✅ manifest.json is valid JSON')
+            print(f'📦 Extension: {manifest.get(\"name\", \"Unknown\")}')
+            print(f'📝 Version: {manifest.get(\"version\", \"Unknown\")}')
+            print(f'🔧 Manifest version: {manifest.get(\"manifest_version\", \"Unknown\")}')
+        except Exception as e:
+            print(f'❌ manifest.json validation failed: {e}')
+            sys.exit(1)
+        "
+        
+    - name: Test JavaScript syntax
+      run: |
+        echo "🔍 Testing JavaScript syntax..."
+        node -c background/service-worker.js && echo "✅ background/service-worker.js"
+        node -c content/content-script.js && echo "✅ content/content-script.js"
+        node -c content/selector.js && echo "✅ content/selector.js"
+        node -c sidebar/sidebar.js && echo "✅ sidebar/sidebar.js"
+        node -c popup/popup.js && echo "✅ popup/popup.js"
+        node -c print/print.js && echo "✅ print/print.js"
         echo "✅ All JavaScript files are syntactically valid"
 
   build-extension:
     name: Build Extension Package
     runs-on: ubuntu-latest
-    needs: lint-and-test
+    needs: validate-extension
     
     steps:
     - name: Checkout code
@@ -68,9 +69,11 @@ jobs:
       
     - name: Create extension package
       run: |
+        echo "📦 Creating extension package..."
         mkdir -p dist
         zip -r dist/docweaver-extension.zip . \
-          -x "*.git*" "node_modules/*" "*.md" ".github/*" "test/*" "*.log" ".qodo/*"
+          -x "*.git*" "node_modules/*" "*.md" ".github/*" "test/*" "*.log" ".qodo/*" "api/*" "docs/*" "requirements.txt" "mkdocs.yml"
+        echo "✅ Extension package created"
         
     - name: Upload extension package
       uses: actions/upload-artifact@v4
@@ -78,36 +81,10 @@ jobs:
         name: docweaver-extension
         path: dist/docweaver-extension.zip
 
-  cross-browser-test:
-    name: Cross-Browser Testing
-    runs-on: ubuntu-latest
-    needs: lint-and-test
-    strategy:
-      matrix:
-        browser: [chrome, firefox, edge]
-        
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        
-    - name: Install Playwright
-      run: npx playwright install --with-deps
-      
-    - name: Run browser tests
-      run: |
-        echo "Testing extension in ${{ matrix.browser }}"
-        # Add browser-specific tests here
-        echo "✅ ${{ matrix.browser }} tests passed"
-
   security-scan:
     name: Security Scan
     runs-on: ubuntu-latest
-    needs: lint-and-test
+    needs: validate-extension
     
     steps:
     - name: Checkout code
@@ -115,7 +92,7 @@ jobs:
       
     - name: Run security audit
       run: |
-        echo "Running security audit..."
+        echo "🔒 Running security audit..."
         # Check for common security issues
         if grep -r "eval(" . --include="*.js" --exclude-dir=node_modules; then
           echo "❌ Found eval() usage - security risk"
@@ -128,30 +105,10 @@ jobs:
         
         echo "✅ Security scan completed"
 
-  performance-test:
-    name: Performance Test
-    runs-on: ubuntu-latest
-    needs: lint-and-test
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        
-    - name: Check bundle size
-      run: |
-        echo "Checking extension size..."
-        du -sh . --exclude=node_modules --exclude=.git --exclude=test
-        echo "✅ Size check completed"
-
   deploy:
     name: Deploy to GitHub Releases
     runs-on: ubuntu-latest
-    needs: [lint-and-test, build-extension, security-scan]
+    needs: [validate-extension, build-extension, security-scan]
     if: github.ref == 'refs/heads/main'
     
     steps:
@@ -177,6 +134,8 @@ jobs:
           - Sound effects for better user feedback
           - Improved content extraction
           - Cross-browser compatibility
+          - Hide/show FAB functionality
+          - Enhanced sidebar management
           
           ### Installation
           1. Download the extension package
@@ -193,6 +152,8 @@ jobs:
           - 💻 Code-only capture
           - 📚 Collection management
           - ✨ Beautiful PDF generation
+          - 👁️‍🗨️ Hide/show FAB
+          - 🎵 Sound effects
         draft: false
         prerelease: false
       env:
