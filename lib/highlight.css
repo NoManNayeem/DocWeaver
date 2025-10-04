@@ -1,0 +1,125 @@
+/* Highlight.js theme for DocWeaver */
+
+.hljs {
+  background: #f8f8f8 !important;
+  color: #333 !important;
+  padding: 0;
+  border-radius: 4px;
+}
+
+.hljs-comment,
+.hljs-quote {
+  color: #6B7280 !important;
+  font-style: italic;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-subst {
+  color: #7C3AED !important;
+  font-weight: 600;
+}
+
+.hljs-number,
+.hljs-literal,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag .hljs-attr {
+  color: #DC2626 !important;
+}
+
+.hljs-string,
+.hljs-doctag {
+  color: #059669 !important;
+}
+
+.hljs-title,
+.hljs-section,
+.hljs-selector-id {
+  color: #6366F1 !important;
+  font-weight: 600;
+}
+
+.hljs-type,
+.hljs-class .hljs-title {
+  color: #DC2626 !important;
+  font-weight: 600;
+}
+
+.hljs-tag,
+.hljs-name,
+.hljs-attribute {
+  color: #7C3AED !important;
+}
+
+.hljs-regexp,
+.hljs-link {
+  color: #059669 !important;
+}
+
+.hljs-symbol,
+.hljs-bullet {
+  color: #DC2626 !important;
+}
+
+.hljs-built_in,
+.hljs-builtin-name {
+  color: #6366F1 !important;
+}
+
+.hljs-meta {
+  color: #6B7280 !important;
+}
+
+.hljs-deletion {
+  background: #FEF2F2 !important;
+  color: #DC2626 !important;
+}
+
+.hljs-addition {
+  background: #F0FDF4 !important;
+  color: #059669 !important;
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: 600;
+}
+
+/* Code block styling */
+pre code.hljs {
+  display: block;
+  overflow-x: auto;
+  padding: 1em;
+  background: #f8f8f8;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-family: 'Fira Code', 'Consolas', 'Monaco', monospace;
+  font-size: 0.9em;
+  line-height: 1.5;
+}
+
+/* Inline code styling */
+code.hljs {
+  background: #f3f4f6;
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  font-size: 0.9em;
+  font-family: 'Fira Code', 'Consolas', 'Monaco', monospace;
+}
+
+/* Print styles */
+@media print {
+  .hljs {
+    background: #f8f8f8 !important;
+    color: #333 !important;
+  }
+  
+  pre code.hljs {
+    background: #f8f8f8 !important;
+    border: 1px solid #e5e7eb !important;
+  }
+}

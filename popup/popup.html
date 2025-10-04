@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DocWeaver</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <div class="popup-header">
+      <div class="logo">
+        <span class="logo-icon">📚</span>
+        <span class="logo-text">DocWeaver</span>
+      </div>
+      <div class="version">v1.0.0</div>
+    </div>
+    
+    <div class="popup-content">
+      <div class="collection-stats" id="collection-stats">
+        <div class="stat-card">
+          <div class="stat-icon">📄</div>
+          <div class="stat-info">
+            <div class="stat-value" id="page-count">0</div>
+            <div class="stat-label">Pages</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📊</div>
+          <div class="stat-info">
+            <div class="stat-value" id="word-count">0</div>
+            <div class="stat-label">Words</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">⏱️</div>
+          <div class="stat-info">
+            <div class="stat-value" id="read-time">0 min</div>
+            <div class="stat-label">Read Time</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="quick-actions">
+        <button class="action-btn primary" id="add-page">
+          <span class="btn-icon">+</span>
+          <span class="btn-text">Add Current Page</span>
+        </button>
+        <button class="action-btn secondary" id="view-collection">
+          <span class="btn-icon">👁️</span>
+          <span class="btn-text">View Collection</span>
+        </button>
+        <button class="action-btn secondary" id="generate-pdf">
+          <span class="btn-icon">✨</span>
+          <span class="btn-text">Generate PDF</span>
+        </button>
+      </div>
+      
+      <div class="recent-pages" id="recent-pages">
+        <div class="section-title">Recent Pages</div>
+        <div class="pages-list" id="pages-list">
+          <div class="empty-state">
+            <div class="empty-icon">📚</div>
+            <div class="empty-text">No pages yet</div>
+            <div class="empty-subtext">Start collecting to see your pages here</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="popup-footer">
+      <div class="footer-links">
+        <a href="#" id="help-link" class="footer-link">Help</a>
+        <a href="#" id="settings-link" class="footer-link">Settings</a>
+        <a href="#" id="about-link" class="footer-link">About</a>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Page item template -->
+  <template id="page-item-template">
+    <div class="page-item" data-page-id="">
+      <div class="page-icon">📄</div>
+      <div class="page-info">
+        <div class="page-title"></div>
+        <div class="page-meta">
+          <span class="page-words"></span>
+          <span class="page-read-time"></span>
+        </div>
+      </div>
+      <div class="page-actions">
+        <button class="page-action" data-action="view" title="View page">
+          <span>👁️</span>
+        </button>
+        <button class="page-action" data-action="delete" title="Delete">
+          <span>🗑️</span>
+        </button>
+      </div>
+    </div>
+  </template>
+  
+  <script src="../lib/webextension-polyfill.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

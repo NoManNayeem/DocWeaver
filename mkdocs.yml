@@ -1,0 +1,134 @@
+site_name: DocWeaver Documentation
+site_description: Seamlessly weave technical documentation into beautiful PDFs
+site_author: Nayeem Islam
+site_url: https://nomanayeem.github.io/DocWeaver
+
+repo_name: NoManNayeem/DocWeaver
+repo_url: https://github.com/NoManNayeem/DocWeaver
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.path
+    - navigation.top
+    - search.highlight
+    - search.share
+    - content.code.copy
+    - content.code.annotate
+  icon:
+    repo: fontawesome/brands/github
+  logo: assets/logo.svg
+  favicon: assets/favicon.ico
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Installation: getting-started/installation.md
+    - Quick Start: getting-started/quick-start.md
+    - First Collection: getting-started/first-collection.md
+  - User Guide:
+    - Basic Usage: user-guide/basic-usage.md
+    - Capture Modes: user-guide/capture-modes.md
+    - Collection Management: user-guide/collection-management.md
+    - PDF Generation: user-guide/pdf-generation.md
+  - Advanced:
+    - Keyboard Shortcuts: advanced/keyboard-shortcuts.md
+    - Best Practices: advanced/best-practices.md
+    - Troubleshooting: advanced/troubleshooting.md
+    - API Reference: advanced/api-reference.md
+  - Development:
+    - Contributing: development/contributing.md
+    - Development Setup: development/setup.md
+    - Architecture: development/architecture.md
+    - Testing: development/testing.md
+  - About:
+    - About DocWeaver: about/about.md
+    - About Nayeem: about/nayeem.md
+    - Changelog: about/changelog.md
+    - License: about/license.md
+
+plugins:
+  - search
+  - git-revision-date-localized:
+      enable_creation_date: true
+  - minify:
+      minify_html: true
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.snippets
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - footnotes
+  - pymdownx.critic
+  - pymdownx.caret
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.tilde
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.magiclink:
+      normalize_issue_symbols: true
+      repo_url_shorthand: true
+      user: NoManNayeem
+      repo: DocWeaver
+  - tables
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/NoManNayeem
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/nomanayeem
+    - icon: fontawesome/brands/linkedin
+      link: https://linkedin.com/in/nomanayeem
+    - icon: fontawesome/solid/envelope
+      link: mailto:nomanayeem@example.com
+  version:
+    provider: mike
+  analytics:
+    provider: google
+    property: G-XXXXXXXXXX

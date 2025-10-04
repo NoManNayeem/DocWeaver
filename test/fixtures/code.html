@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Algorithms - Test Code Page</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        pre {
+            background: #f8f8f8;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            border: 1px solid #e5e7eb;
+        }
+        code {
+            background: #f3f4f6;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: 'Fira Code', monospace;
+        }
+        .algorithm-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+        }
+        .complexity {
+            background: #f0f9ff;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>JavaScript Algorithms and Data Structures</h1>
+        <p class="meta">By Algorithm Master • Published on March 20, 2024</p>
+    </div>
+    
+    <div class="content">
+        <h2>Sorting Algorithms</h2>
+        <p>Here are some common sorting algorithms implemented in JavaScript:</p>
+        
+        <div class="algorithm-section">
+            <h3>Bubble Sort</h3>
+            <p>Bubble sort is a simple sorting algorithm that repeatedly steps through the list, compares adjacent elements and swaps them if they are in the wrong order.</p>
+            
+            <pre><code>function bubbleSort(arr) {
+  const n = arr.length;
+  
+  for (let i = 0; i < n - 1; i++) {
+    for (let j = 0; j < n - i - 1; j++) {
+      if (arr[j] > arr[j + 1]) {
+        // Swap elements
+        [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+      }
+    }
+  }
+  
+  return arr;
+}
+
+// Example usage
+const numbers = [64, 34, 25, 12, 22, 11, 90];
+console.log("Original array:", numbers);
+console.log("Sorted array:", bubbleSort([...numbers]));</code></pre>
+            
+            <div class="complexity">
+                <strong>Time Complexity:</strong> O(n²) | <strong>Space Complexity:</strong> O(1)
+            </div>
+        </div>
+        
+        <div class="algorithm-section">
+            <h3>Quick Sort</h3>
+            <p>Quick sort is a divide-and-conquer algorithm. It works by selecting a 'pivot' element from the array and partitioning the other elements into two sub-arrays.</p>
+            
+            <pre><code>function quickSort(arr) {
+  if (arr.length <= 1) {
+    return arr;
+  }
+  
+  const pivot = arr[Math.floor(arr.length / 2)];
+  const left = arr.filter(x => x < pivot);
+  const middle = arr.filter(x => x === pivot);
+  const right = arr.filter(x => x > pivot);
+  
+  return [...quickSort(left), ...middle, ...quickSort(right)];
+}
+
+// Example usage
+const numbers = [3, 6, 8, 10, 1, 2, 1];
+console.log("Original array:", numbers);
+console.log("Sorted array:", quickSort([...numbers]));</code></pre>
+            
+            <div class="complexity">
+                <strong>Time Complexity:</strong> O(n log n) average, O(n²) worst case | <strong>Space Complexity:</strong> O(log n)
+            </div>
+        </div>
+        
+        <h2>Search Algorithms</h2>
+        
+        <div class="algorithm-section">
+            <h3>Binary Search</h3>
+            <p>Binary search is an efficient algorithm for finding an item from a sorted list of items. It works by repeatedly dividing in half the portion of the list that could contain the item.</p>
+            
+            <pre><code>function binarySearch(arr, target) {
+  let left = 0;
+  let right = arr.length - 1;
+  
+  while (left <= right) {
+    const mid = Math.floor((left + right) / 2);
+    
+    if (arr[mid] === target) {
+      return mid;
+    } else if (arr[mid] < target) {
+      left = mid + 1;
+    } else {
+      right = mid - 1;
+    }
+  }
+  
+  return -1; // Not found
+}
+
+// Example usage
+const sortedArray = [1, 3, 5, 7, 9, 11, 13, 15];
+const target = 7;
+const result = binarySearch(sortedArray, target);
+console.log(`Target ${target} found at index: ${result}`);</code></pre>
+            
+            <div class="complexity">
+                <strong>Time Complexity:</strong> O(log n) | <strong>Space Complexity:</strong> O(1)
+            </div>
+        </div>
+        
+        <h2>Data Structures</h2>
+        
+        <div class="algorithm-section">
+            <h3>Linked List Implementation</h3>
+            <p>A linked list is a linear data structure where elements are stored in nodes, and each node points to the next node in the sequence.</p>
+            
+            <pre><code>class ListNode {
+  constructor(val, next = null) {
+    this.val = val;
+    this.next = next;
+  }
+}
+
+class LinkedList {
+  constructor() {
+    this.head = null;
+    this.size = 0;
+  }
+  
+  // Add element to the end
+  append(val) {
+    const newNode = new ListNode(val);
+    
+    if (!this.head) {
+      this.head = newNode;
+    } else {
+      let current = this.head;
+      while (current.next) {
+        current = current.next;
+      }
+      current.next = newNode;
+    }
+    
+    this.size++;
+  }
+  
+  // Add element to the beginning
+  prepend(val) {
+    const newNode = new ListNode(val);
+    newNode.next = this.head;
+    this.head = newNode;
+    this.size++;
+  }
+  
+  // Remove element by value
+  remove(val) {
+    if (!this.head) return false;
+    
+    if (this.head.val === val) {
+      this.head = this.head.next;
+      this.size--;
+      return true;
+    }
+    
+    let current = this.head;
+    while (current.next) {
+      if (current.next.val === val) {
+        current.next = current.next.next;
+        this.size--;
+        return true;
+      }
+      current = current.next;
+    }
+    
+    return false;
+  }
+  
+  // Find element
+  find(val) {
+    let current = this.head;
+    while (current) {
+      if (current.val === val) {
+        return current;
+      }
+      current = current.next;
+    }
+    return null;
+  }
+  
+  // Convert to array
+  toArray() {
+    const result = [];
+    let current = this.head;
+    while (current) {
+      result.push(current.val);
+      current = current.next;
+    }
+    return result;
+  }
+}
+
+// Example usage
+const list = new LinkedList();
+list.append(1);
+list.append(2);
+list.append(3);
+list.prepend(0);
+console.log("Linked list:", list.toArray()); // [0, 1, 2, 3]</code></pre>
+        </div>
+        
+        <div class="algorithm-section">
+            <h3>Binary Tree Implementation</h3>
+            <p>A binary tree is a tree data structure in which each node has at most two children, referred to as the left child and the right child.</p>
+            
+            <pre><code>class TreeNode {
+  constructor(val, left = null, right = null) {
+    this.val = val;
+    this.left = left;
+    this.right = right;
+  }
+}
+
+class BinaryTree {
+  constructor() {
+    this.root = null;
+  }
+  
+  // Insert a value
+  insert(val) {
+    const newNode = new TreeNode(val);
+    
+    if (!this.root) {
+      this.root = newNode;
+      return;
+    }
+    
+    this.insertNode(this.root, newNode);
+  }
+  
+  insertNode(node, newNode) {
+    if (newNode.val < node.val) {
+      if (!node.left) {
+        node.left = newNode;
+      } else {
+        this.insertNode(node.left, newNode);
+      }
+    } else {
+      if (!node.right) {
+        node.right = newNode;
+      } else {
+        this.insertNode(node.right, newNode);
+      }
+    }
+  }
+  
+  // In-order traversal
+  inOrderTraversal(node = this.root, result = []) {
+    if (node) {
+      this.inOrderTraversal(node.left, result);
+      result.push(node.val);
+      this.inOrderTraversal(node.right, result);
+    }
+    return result;
+  }
+  
+  // Pre-order traversal
+  preOrderTraversal(node = this.root, result = []) {
+    if (node) {
+      result.push(node.val);
+      this.preOrderTraversal(node.left, result);
+      this.preOrderTraversal(node.right, result);
+    }
+    return result;
+  }
+  
+  // Post-order traversal
+  postOrderTraversal(node = this.root, result = []) {
+    if (node) {
+      this.postOrderTraversal(node.left, result);
+      this.postOrderTraversal(node.right, result);
+      result.push(node.val);
+    }
+    return result;
+  }
+}
+
+// Example usage
+const tree = new BinaryTree();
+tree.insert(10);
+tree.insert(5);
+tree.insert(15);
+tree.insert(3);
+tree.insert(7);
+tree.insert(12);
+tree.insert(18);
+
+console.log("In-order:", tree.inOrderTraversal());
+console.log("Pre-order:", tree.preOrderTraversal());
+console.log("Post-order:", tree.postOrderTraversal());</code></pre>
+        </div>
+        
+        <h2>Dynamic Programming</h2>
+        
+        <div class="algorithm-section">
+            <h3>Fibonacci Sequence</h3>
+            <p>The Fibonacci sequence is a series of numbers where each number is the sum of the two preceding ones.</p>
+            
+            <pre><code>// Recursive approach (inefficient)
+function fibonacciRecursive(n) {
+  if (n <= 1) return n;
+  return fibonacciRecursive(n - 1) + fibonacciRecursive(n - 2);
+}
+
+// Dynamic programming approach (efficient)
+function fibonacciDP(n) {
+  if (n <= 1) return n;
+  
+  const dp = [0, 1];
+  for (let i = 2; i <= n; i++) {
+    dp[i] = dp[i - 1] + dp[i - 2];
+  }
+  
+  return dp[n];
+}
+
+// Space-optimized approach
+function fibonacciOptimized(n) {
+  if (n <= 1) return n;
+  
+  let a = 0, b = 1;
+  for (let i = 2; i <= n; i++) {
+    const temp = a + b;
+    a = b;
+    b = temp;
+  }
+  
+  return b;
+}
+
+// Example usage
+console.log("Fibonacci(10):", fibonacciDP(10));
+console.log("Fibonacci(20):", fibonacciOptimized(20));</code></pre>
+            
+            <div class="complexity">
+                <strong>Time Complexity:</strong> O(n) | <strong>Space Complexity:</strong> O(1)
+            </div>
+        </div>
+        
+        <h2>Graph Algorithms</h2>
+        
+        <div class="algorithm-section">
+            <h3>Depth-First Search (DFS)</h3>
+            <p>DFS is an algorithm for traversing or searching tree or graph data structures. It starts at the root and explores as far as possible along each branch before backtracking.</p>
+            
+            <pre><code>class Graph {
+  constructor() {
+    this.adjacencyList = {};
+  }
+  
+  addVertex(vertex) {
+    if (!this.adjacencyList[vertex]) {
+      this.adjacencyList[vertex] = [];
+    }
+  }
+  
+  addEdge(vertex1, vertex2) {
+    this.adjacencyList[vertex1].push(vertex2);
+    this.adjacencyList[vertex2].push(vertex1);
+  }
+  
+  dfs(start) {
+    const result = [];
+    const visited = {};
+    const adjacencyList = this.adjacencyList;
+    
+    function dfsHelper(vertex) {
+      if (!vertex) return null;
+      visited[vertex] = true;
+      result.push(vertex);
+      
+      adjacencyList[vertex].forEach(neighbor => {
+        if (!visited[neighbor]) {
+          dfsHelper(neighbor);
+        }
+      });
+    }
+    
+    dfsHelper(start);
+    return result;
+  }
+  
+  bfs(start) {
+    const queue = [start];
+    const result = [];
+    const visited = {};
+    visited[start] = true;
+    
+    while (queue.length) {
+      const vertex = queue.shift();
+      result.push(vertex);
+      
+      this.adjacencyList[vertex].forEach(neighbor => {
+        if (!visited[neighbor]) {
+          visited[neighbor] = true;
+          queue.push(neighbor);
+        }
+      });
+    }
+    
+    return result;
+  }
+}
+
+// Example usage
+const graph = new Graph();
+graph.addVertex('A');
+graph.addVertex('B');
+graph.addVertex('C');
+graph.addVertex('D');
+graph.addEdge('A', 'B');
+graph.addEdge('A', 'C');
+graph.addEdge('B', 'D');
+graph.addEdge('C', 'D');
+
+console.log("DFS from A:", graph.dfs('A'));
+console.log("BFS from A:", graph.bfs('A'));</code></pre>
+        </div>
+        
+        <h2>Conclusion</h2>
+        <p>These algorithms and data structures form the foundation of computer science and are essential for solving complex problems efficiently. Practice implementing them and understanding their time and space complexities.</p>
+        
+        <p>For more advanced topics, check out the <a href="https://leetcode.com/">LeetCode</a> platform for coding challenges.</p>
+    </div>
+</body>
+</html>

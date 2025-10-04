@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DocWeaver PDF Generator</title>
+  <link rel="stylesheet" href="../lib/highlight.css">
+  <link rel="stylesheet" href="print.css">
+  <style>
+    /* Paged.js styles for print layout */
+    @page {
+      size: A4;
+      margin: 20mm;
+    }
+    
+    @page {
+      @top-left {
+        content: var(--doc-title);
+        font-size: 10pt;
+        color: #666;
+      }
+      @top-right {
+        content: var(--source-url);
+        font-size: 10pt;
+        color: #666;
+      }
+      @bottom-center {
+        content: counter(page) " / " counter(pages);
+        font-size: 10pt;
+        color: #666;
+      }
+    }
+    
+    @page :first {
+      @top-left { content: none; }
+      @top-right { content: none; }
+    }
+    
+    /* Print-specific styles */
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+    
+    .page-break {
+      page-break-before: always;
+    }
+    
+    .no-break {
+      page-break-inside: avoid;
+    }
+    
+    h1, h2, h3, h4, h5, h6 {
+      page-break-after: avoid;
+      margin-top: 1.5em;
+      margin-bottom: 0.5em;
+    }
+    
+    pre, code {
+      page-break-inside: avoid;
+      font-family: 'Fira Code', 'Consolas', 'Monaco', monospace;
+    }
+    
+    table {
+      page-break-inside: avoid;
+    }
+    
+    img {
+      max-width: 100%;
+      height: auto;
+      page-break-inside: avoid;
+    }
+    
+    .cover-page {
+      text-align: center;
+      padding: 50mm 0;
+    }
+    
+    .cover-title {
+      font-size: 24pt;
+      font-weight: 600;
+      margin-bottom: 20pt;
+      color: #111827;
+    }
+    
+    .cover-subtitle {
+      font-size: 14pt;
+      color: #6B7280;
+      margin-bottom: 30pt;
+    }
+    
+    .cover-meta {
+      font-size: 12pt;
+      color: #6B7280;
+      line-height: 1.8;
+    }
+    
+    .toc {
+      page-break-after: always;
+    }
+    
+    .toc-title {
+      font-size: 18pt;
+      font-weight: 600;
+      margin-bottom: 20pt;
+      color: #111827;
+    }
+    
+    .toc-item {
+      margin-bottom: 8pt;
+      font-size: 12pt;
+    }
+    
+    .toc-item a {
+      color: #6366F1;
+      text-decoration: none;
+    }
+    
+    .page-header {
+      border-bottom: 1pt solid #e5e7eb;
+      padding-bottom: 10pt;
+      margin-bottom: 20pt;
+    }
+    
+    .page-title {
+      font-size: 16pt;
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 4pt;
+    }
+    
+    .page-meta {
+      font-size: 10pt;
+      color: #6B7280;
+    }
+    
+    .page-content {
+      font-size: 11pt;
+      line-height: 1.6;
+    }
+    
+    .page-content h1 {
+      font-size: 16pt;
+      font-weight: 600;
+      color: #111827;
+      margin-top: 20pt;
+      margin-bottom: 10pt;
+    }
+    
+    .page-content h2 {
+      font-size: 14pt;
+      font-weight: 600;
+      color: #111827;
+      margin-top: 16pt;
+      margin-bottom: 8pt;
+    }
+    
+    .page-content h3 {
+      font-size: 12pt;
+      font-weight: 600;
+      color: #111827;
+      margin-top: 12pt;
+      margin-bottom: 6pt;
+    }
+    
+    .page-content p {
+      margin-bottom: 8pt;
+    }
+    
+    .page-content ul, .page-content ol {
+      margin-bottom: 8pt;
+      padding-left: 20pt;
+    }
+    
+    .page-content li {
+      margin-bottom: 4pt;
+    }
+    
+    .page-content blockquote {
+      border-left: 3pt solid #6366F1;
+      padding-left: 12pt;
+      margin: 12pt 0;
+      color: #6B7280;
+      font-style: italic;
+    }
+    
+    .page-content pre {
+      background: #f8f8f8;
+      border: 1pt solid #e5e7eb;
+      border-radius: 4pt;
+      padding: 12pt;
+      margin: 12pt 0;
+      overflow-x: auto;
+      font-size: 10pt;
+    }
+    
+    .page-content code {
+      background: #f3f4f6;
+      padding: 2pt 4pt;
+      border-radius: 2pt;
+      font-size: 10pt;
+    }
+    
+    .page-content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12pt 0;
+    }
+    
+    .page-content th,
+    .page-content td {
+      border: 1pt solid #e5e7eb;
+      padding: 6pt 8pt;
+      text-align: left;
+    }
+    
+    .page-content th {
+      background: #f8fafc;
+      font-weight: 600;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 50pt;
+      font-size: 14pt;
+      color: #6B7280;
+    }
+    
+    .error {
+      text-align: center;
+      padding: 50pt;
+      font-size: 14pt;
+      color: #dc2626;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div class="loading">
+      <div>🔄 Generating PDF...</div>
+      <div style="font-size: 12pt; margin-top: 10pt; color: #9CA3AF;">
+        Weaving your documentation into a beautiful PDF...
+      </div>
+    </div>
+  </div>
+  
+  <script src="../lib/webextension-polyfill.js"></script>
+  <script src="../lib/highlight.min.js"></script>
+  <script src="../lib/paged.polyfill.js"></script>
+  <script src="print.js"></script>
+</body>
+</html>

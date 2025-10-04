@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DocWeaver Test Page</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+        }
+        code {
+            background: #f3f4f6;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: 'Fira Code', monospace;
+        }
+        pre {
+            background: #f8f8f8;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>DocWeaver Test Page</h1>
+    <p>This page is designed to test the DocWeaver extension functionality.</p>
+    
+    <div class="test-section">
+        <h2>Test Section 1: Article Content</h2>
+        <p>This is a test paragraph with some <strong>bold text</strong> and <em>italic text</em>.</p>
+        <p>Here's a list of items:</p>
+        <ul>
+            <li>First item</li>
+            <li>Second item</li>
+            <li>Third item</li>
+        </ul>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test Section 2: Code Content</h2>
+        <p>Here's some JavaScript code:</p>
+        <pre><code>function hello() {
+  console.log("Hello, World!");
+  return "success";
+}
+
+hello();</code></pre>
+        
+        <p>And some Python code:</p>
+        <pre><code>def fibonacci(n):
+    if n <= 1:
+        return n
+    return fibonacci(n-1) + fibonacci(n-2)
+
+print(fibonacci(10))</code></pre>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test Section 3: Table Content</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Age</th>
+                    <th>City</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>John Doe</td>
+                    <td>30</td>
+                    <td>New York</td>
+                </tr>
+                <tr>
+                    <td>Jane Smith</td>
+                    <td>25</td>
+                    <td>Los Angeles</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test Section 4: Blockquote</h2>
+        <blockquote>
+            <p>"The best way to predict the future is to create it."</p>
+            <cite>- Peter Drucker</cite>
+        </blockquote>
+    </div>
+    
+    <div class="test-section">
+        <h2>Instructions</h2>
+        <ol>
+            <li>Click the DocWeaver FAB (floating action button) in the bottom-right corner</li>
+            <li>Try different capture modes: Full Page, Article Only, Code Only</li>
+            <li>Test Smart Selection by clicking Alt+S and selecting specific content</li>
+            <li>View your collection and generate a PDF</li>
+        </ol>
+    </div>
+</body>
+</html>

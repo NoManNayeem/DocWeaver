@@ -1,0 +1,66 @@
+name: Deploy Documentation
+
+on:
+  push:
+    branches: [ main ]
+    paths: [ 'docs/**', 'mkdocs.yml' ]
+  pull_request:
+    branches: [ main ]
+    paths: [ 'docs/**', 'mkdocs.yml' ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install dependencies
+      run: |
+        pip install mkdocs
+        pip install mkdocs-material
+        pip install mkdocs-minify-plugin
+        pip install mkdocs-git-revision-date-localized-plugin
+
+    - name: Build documentation
+      run: mkdocs build
+
+    - name: Deploy to GitHub Pages
+      if: github.ref == 'refs/heads/main'
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./site
+        cname: nomanayeem.github.io
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install dependencies
+      run: |
+        pip install mkdocs
+        pip install mkdocs-material
+        pip install mkdocs-minify-plugin
+        pip install mkdocs-git-revision-date-localized-plugin
+
+    - name: Test documentation build
+      run: mkdocs build --strict
+
+    - name: Test documentation links
+      run: |
+        pip install mkdocs-linkcheck
+        mkdocs build
+        linkchecker site/index.html

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>React Hooks Documentation - Test Article</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        code {
+            background: #f3f4f6;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-family: 'Fira Code', monospace;
+        }
+        pre {
+            background: #f8f8f8;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        .sidebar {
+            float: right;
+            width: 200px;
+            background: #f0f0f0;
+            padding: 10px;
+            margin: 0 0 20px 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>React Hooks Documentation</h1>
+        <p class="meta">By React Team • Published on March 15, 2024</p>
+    </div>
+    
+    <div class="sidebar">
+        <h3>Table of Contents</h3>
+        <ul>
+            <li><a href="#introduction">Introduction</a></li>
+            <li><a href="#usestate">useState</a></li>
+            <li><a href="#useeffect">useEffect</a></li>
+            <li><a href="#custom-hooks">Custom Hooks</a></li>
+        </ul>
+    </div>
+    
+    <div class="content">
+        <h2 id="introduction">Introduction to React Hooks</h2>
+        <p>React Hooks are a new addition in React 16.8. They let you use state and other React features without writing a class. Hooks are functions that let you "hook into" React state and lifecycle features from function components.</p>
+        
+        <h2 id="usestate">useState Hook</h2>
+        <p>The <code>useState</code> hook lets you add state to function components. Here's an example:</p>
+        
+        <pre><code>import React, { useState } from 'react';
+
+function Counter() {
+  const [count, setCount] = useState(0);
+  
+  return (
+    &lt;div&gt;
+      &lt;p&gt;You clicked {count} times&lt;/p&gt;
+      &lt;button onClick={() =&gt; setCount(count + 1)}&gt;
+        Click me
+      &lt;/button&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+        
+        <h2 id="useeffect">useEffect Hook</h2>
+        <p>The <code>useEffect</code> hook lets you perform side effects in function components. It's similar to componentDidMount, componentDidUpdate, and componentWillUnmount combined.</p>
+        
+        <pre><code>import React, { useState, useEffect } from 'react';
+
+function Example() {
+  const [count, setCount] = useState(0);
+  
+  useEffect(() =&gt; {
+    document.title = `You clicked ${count} times`;
+  });
+  
+  return (
+    &lt;div&gt;
+      &lt;p&gt;You clicked {count} times&lt;/p&gt;
+      &lt;button onClick={() =&gt; setCount(count + 1)}&gt;
+        Click me
+      &lt;/button&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+        
+        <h2 id="custom-hooks">Custom Hooks</h2>
+        <p>You can create custom hooks to extract component logic into reusable functions. A custom hook is a JavaScript function whose name starts with "use" and that may call other hooks.</p>
+        
+        <pre><code>import { useState, useEffect } from 'react';
+
+function useCounter(initialValue = 0) {
+  const [count, setCount] = useState(initialValue);
+  
+  const increment = () =&gt; setCount(count + 1);
+  const decrement = () =&gt; setCount(count - 1);
+  const reset = () =&gt; setCount(initialValue);
+  
+  return { count, increment, decrement, reset };
+}</code></pre>
+        
+        <h3>Best Practices</h3>
+        <ul>
+            <li>Only call hooks at the top level of your function</li>
+            <li>Don't call hooks inside loops, conditions, or nested functions</li>
+            <li>Use custom hooks to share stateful logic between components</li>
+            <li>Keep your effects focused and single-purpose</li>
+        </ul>
+        
+        <h3>Common Patterns</h3>
+        <p>Here are some common patterns you'll encounter when working with hooks:</p>
+        
+        <ol>
+            <li><strong>State Management:</strong> Use useState for local component state</li>
+            <li><strong>Side Effects:</strong> Use useEffect for data fetching, subscriptions, and cleanup</li>
+            <li><strong>Performance:</strong> Use useMemo and useCallback for optimization</li>
+            <li><strong>Context:</strong> Use useContext for sharing data across components</li>
+        </ol>
+        
+        <blockquote>
+            <p><strong>Note:</strong> Hooks don't replace your knowledge of React concepts. Instead, they provide a more direct API to the React concepts you already know: props, state, context, refs, and lifecycle.</p>
+        </blockquote>
+        
+        <h3>Migration from Classes</h3>
+        <p>If you're migrating from class components to hooks, here's a quick reference:</p>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Class Component</th>
+                    <th>Hook Equivalent</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>this.state</td>
+                    <td>useState</td>
+                </tr>
+                <tr>
+                    <td>componentDidMount</td>
+                    <td>useEffect(() =&gt; {}, [])</td>
+                </tr>
+                <tr>
+                    <td>componentDidUpdate</td>
+                    <td>useEffect(() =&gt; {})</td>
+                </tr>
+                <tr>
+                    <td>componentWillUnmount</td>
+                    <td>useEffect(() =&gt; { return () =&gt; {} }, [])</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <h3>Conclusion</h3>
+        <p>React Hooks provide a powerful and flexible way to work with state and side effects in React applications. They make your code more readable and maintainable by allowing you to use React features in function components.</p>
+        
+        <p>For more information, check out the <a href="https://reactjs.org/docs/hooks-intro.html">official React Hooks documentation</a>.</p>
+    </div>
+    
+    <div class="sidebar">
+        <h3>Related Articles</h3>
+        <ul>
+            <li><a href="#">React Context API</a></li>
+            <li><a href="#">React Performance</a></li>
+            <li><a href="#">React Testing</a></li>
+        </ul>
+    </div>
+</body>
+</html>

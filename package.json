@@ -1,0 +1,42 @@
+{
+  "name": "docweaver",
+  "version": "1.0.0",
+  "description": "Seamlessly weave technical documentation into beautiful PDFs",
+  "main": "index.js",
+  "scripts": {
+    "docs:serve": "mkdocs serve",
+    "docs:build": "mkdocs build",
+    "docs:deploy": "mkdocs gh-deploy",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint . --ext .js",
+    "lint:fix": "eslint . --ext .js --fix",
+    "validate": "web-ext lint --source-dir .",
+    "package": "zip -r dist/docweaver-extension.zip . -x '*.git*' 'node_modules/*' '*.md' '.github/*' 'docs/*' 'api/*' 'requirements.txt' 'package.json' 'mkdocs.yml'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NoManNayeem/DocWeaver.git"
+  },
+  "keywords": [
+    "browser-extension",
+    "documentation",
+    "pdf",
+    "developer-tools",
+    "chrome-extension",
+    "firefox-extension",
+    "edge-extension"
+  ],
+  "author": "Nayeem Islam",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/NoManNayeem/DocWeaver/issues"
+  },
+  "homepage": "https://github.com/NoManNayeem/DocWeaver#readme",
+  "devDependencies": {
+    "eslint": "^8.55.0",
+    "web-ext": "^7.8.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
