@@ -15,11 +15,15 @@ class DocWeaverContentScript {
     this.selectionMode = false;
     this.isHidden = false;
     this.hideTimeout = null;
+    this.soundEnabled = true;
     
     this.init();
   }
   
   async init() {
+    // Load user preferences first
+    await this.loadUserPreferences();
+    
     // Wait for DOM to be ready
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', () => this.setup());
@@ -43,6 +47,48 @@ class DocWeaverContentScript {
     
     // Load collection count
     this.loadCollectionCount();
+    
+    // Apply saved preferences
+    this.applyUserPreferences();
+  }
+  
+  async loadUserPreferences() {
+    try {
+      const result = await browser.storage.local.get(['docweaver_preferences']);
+      const preferences = result.docweaver_preferences || {};
+      
+      this.isHidden = preferences.isHidden || false;
+      this.soundEnabled = preferences.soundEnabled !== false; // Default to true
+      
+      console.log('Loaded user preferences:', { isHidden: this.isHidden, soundEnabled: this.soundEnabled });
+    } catch (error) {
+      console.error('Error loading user preferences:', error);
+    }
+  }
+  
+  async saveUserPreferences() {
+    try {
+      const preferences = {
+        isHidden: this.isHidden,
+        soundEnabled: this.soundEnabled
+      };
+      
+      await browser.storage.local.set({ docweaver_preferences: preferences });
+      console.log('Saved user preferences:', preferences);
+    } catch (error) {
+      console.error('Error saving user preferences:', error);
+    }
+  }
+  
+  applyUserPreferences() {
+    // Apply hidden state
+    if (this.isHidden) {
+      const container = document.getElementById('docweaver-container');
+      if (container) {
+        container.style.display = 'none';
+        this.createHideIndicator();
+      }
+    }
   }
   
   injectFAB() {
@@ -72,6 +118,7 @@ class DocWeaverContentScript {
           <button class="fab-action" id="fab-add" title="Add Page">+ Add</button>
           <button class="fab-action" id="fab-view" title="View Collection">👁️</button>
           <button class="fab-action" id="fab-generate" title="Generate PDF">✨ Create</button>
+          <button class="fab-action" id="fab-sound" title="Toggle Sound">🔊 Sound</button>
           <button class="fab-action" id="fab-hide" title="Hide FAB">👁️‍🗨️ Hide</button>
         </div>
       </div>
@@ -86,13 +133,18 @@ class DocWeaverContentScript {
     const addButton = this.fab.getElementById('fab-add');
     const viewButton = this.fab.getElementById('fab-view');
     const generateButton = this.fab.getElementById('fab-generate');
+    const soundButton = this.fab.getElementById('fab-sound');
     const hideButton = this.fab.getElementById('fab-hide');
     
     mainButton.addEventListener('click', () => this.toggleActive());
     addButton.addEventListener('click', () => this.showCaptureModal());
     viewButton.addEventListener('click', () => this.openSidebar());
     generateButton.addEventListener('click', () => this.generatePDF());
+    soundButton.addEventListener('click', () => this.toggleSound());
     hideButton.addEventListener('click', () => this.hideFAB());
+    
+    // Update sound button display
+    this.updateSoundButton();
   }
   
   setupHideShowFeatures() {
@@ -117,19 +169,11 @@ class DocWeaverContentScript {
       container.style.display = 'none';
       
       // Create hide indicator if it doesn't exist
-      let hideIndicator = document.getElementById('fab-hide-indicator');
-      if (!hideIndicator) {
-        hideIndicator = document.createElement('div');
-        hideIndicator.id = 'fab-hide-indicator';
-        hideIndicator.className = 'fab-hide-indicator';
-        hideIndicator.innerHTML = '<span class="hide-icon">👁️‍🗨️</span>';
-        document.body.appendChild(hideIndicator);
-        
-        // Add click event to show FAB
-        hideIndicator.addEventListener('click', () => this.showFAB());
-      }
+      this.createHideIndicator();
       
-      hideIndicator.style.display = 'flex';
+      // Save preferences
+      this.saveUserPreferences();
+      
       this.showToast('FAB hidden. Click the eye icon or press Alt+Shift+H to show', 'info', 3000);
     }
   }
@@ -146,7 +190,45 @@ class DocWeaverContentScript {
         hideIndicator.style.display = 'none';
       }
       
+      // Save preferences
+      this.saveUserPreferences();
+      
       this.showToast('FAB shown', 'success', 2000);
+    }
+  }
+  
+  createHideIndicator() {
+    let hideIndicator = document.getElementById('fab-hide-indicator');
+    if (!hideIndicator) {
+      hideIndicator = document.createElement('div');
+      hideIndicator.id = 'fab-hide-indicator';
+      hideIndicator.className = 'fab-hide-indicator';
+      hideIndicator.innerHTML = '<span class="hide-icon">👁️‍🗨️</span>';
+      document.body.appendChild(hideIndicator);
+      
+      // Add click event to show FAB
+      hideIndicator.addEventListener('click', () => this.showFAB());
+    }
+    
+    hideIndicator.style.display = 'flex';
+  }
+  
+  toggleSound() {
+    this.soundEnabled = !this.soundEnabled;
+    this.updateSoundButton();
+    this.saveUserPreferences();
+    
+    const message = this.soundEnabled ? 'Sound enabled' : 'Sound disabled';
+    this.showToast(message, 'info', 2000);
+  }
+  
+  updateSoundButton() {
+    const soundButton = this.fab.getElementById('fab-sound');
+    if (soundButton) {
+      const icon = this.soundEnabled ? '🔊' : '🔇';
+      const text = this.soundEnabled ? 'Sound' : 'Mute';
+      soundButton.innerHTML = `${icon} ${text}`;
+      soundButton.title = this.soundEnabled ? 'Disable Sound' : 'Enable Sound';
     }
   }
   
@@ -173,6 +255,10 @@ class DocWeaverContentScript {
           case 'c':
             e.preventDefault();
             this.clearCollection();
+            break;
+          case 'm':
+            e.preventDefault();
+            this.toggleSound();
             break;
         }
       } else if (e.key === 'Escape') {
@@ -1135,6 +1221,11 @@ class DocWeaverContentScript {
   }
   
   playSound(type) {
+    // Check if sound is enabled
+    if (!this.soundEnabled) {
+      return;
+    }
+    
     try {
       // Create audio context for sound effects
       const audioContext = new (window.AudioContext || window.webkitAudioContext)();

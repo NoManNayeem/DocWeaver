@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DocWeaver Persistent Preferences Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f8fafc;
+        }
+        
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .test-title {
+            color: #6366f1;
+            margin-bottom: 15px;
+        }
+        
+        .test-steps {
+            background: #ecfdf5;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #10b981;
+        }
+        
+        .test-step {
+            margin: 10px 0;
+            padding: 8px;
+            background: white;
+            border-radius: 4px;
+            border: 1px solid #d1fae5;
+        }
+        
+        .status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        
+        .status.pass {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .status.fail {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .status.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .highlight {
+            background: #fef3c7;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        
+        .keyboard-shortcuts {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+        }
+        
+        .shortcut {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+            padding: 8px;
+            background: white;
+            border-radius: 4px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .shortcut-key {
+            font-family: 'Fira Code', monospace;
+            background: #6366f1;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 DocWeaver Persistent Preferences Test</h1>
+    <p>This page tests the persistent hide state and sound toggle functionality.</p>
+    
+    <div class="test-section">
+        <h2 class="test-title">📋 Persistent Hide State Test</h2>
+        <div class="test-steps">
+            <div class="test-step">
+                <strong>Step 1:</strong> Hide the FAB using the hide button
+                <span class="status pending" id="hide-fab-status">Pending</span>
+            </div>
+            <div class="test-step">
+                <strong>Step 2:</strong> Refresh the page (F5 or Ctrl+R)
+                <span class="status pending" id="refresh-page-status">Pending</span>
+            </div>
+            <div class="test-step">
+                <strong>Step 3:</strong> Verify FAB stays hidden after refresh
+                <span class="status pending" id="fab-still-hidden-status">Pending</span>
+            </div>
+            <div class="test-step">
+                <strong>Step 4:</strong> Click the eye icon to show FAB
+                <span class="status pending" id="show-fab-status">Pending</span>
+            </div>
+            <div class="test-step">
+                <strong>Step 5:</strong> Refresh the page again
+                <span class="status pending" id="refresh-again-status">Pending</span>
+            </div>
+            <div class="test-step">
+                <strong>Step 6:</strong> Verify FAB stays visible after refresh
+                <span class="status pending" id="fab-still-visible-status">Pending</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2 class="test-title">🔊 Sound Toggle Test</h2>
+        <div class="test-steps">
+            <div class="test-step">
+                <strong>Step 1:</strong> Click the sound button to disable sound
+                <span class="status pending" id="disable-sound-status">Pending</span>
+            </div>
+            <div class="test-step">
+                <strong>Step 2:</strong> Perform an action that triggers sound (add page, etc.)
+                <span class="status pending" id="test-sound-disabled-status">Pending</span>
+            </div>
+            <div class="test-step">
+                <strong>Step 3:</strong> Refresh the page
+                <span class="status pending" id="refresh-sound-status">Pending</span>
+            </div>
+            <div class="test-step">
+                <strong>Step 4:</strong> Verify sound stays disabled after refresh
+                <span class="status pending" id="sound-still-disabled-status">Pending</span>
+            </div>
+            <div class="test-step">
+                <strong>Step 5:</strong> Click sound button to enable sound
+                <span class="status pending" id="enable-sound-status">Pending</span>
+            </div>
+            <div class="test-step">
+                <strong>Step 6:</strong> Test that sound works again
+                <span class="status pending" id="test-sound-enabled-status">Pending</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2 class="test-title">⌨️ Keyboard Shortcuts</h2>
+        <div class="keyboard-shortcuts">
+            <h3>Available Shortcuts:</h3>
+            <div class="shortcut">
+                <span><strong>Alt + A</strong></span>
+                <span class="shortcut-key">Alt+A</span>
+                <span>Quick add page</span>
+            </div>
+            <div class="shortcut">
+                <span><strong>Alt + S</strong></span>
+                <span class="shortcut-key">Alt+S</span>
+                <span>Smart selection mode</span>
+            </div>
+            <div class="shortcut">
+                <span><strong>Alt + V</strong></span>
+                <span class="shortcut-key">Alt+V</span>
+                <span>View collection</span>
+            </div>
+            <div class="shortcut">
+                <span><strong>Alt + G</strong></span>
+                <span class="shortcut-key">Alt+G</span>
+                <span>Generate PDF</span>
+            </div>
+            <div class="shortcut">
+                <span><strong>Alt + M</strong></span>
+                <span class="shortcut-key">Alt+M</span>
+                <span>Toggle sound</span>
+            </div>
+            <div class="shortcut">
+                <span><strong>Alt + Shift + H</strong></span>
+                <span class="shortcut-key">Alt+Shift+H</span>
+                <span>Hide/show FAB</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2 class="test-title">🎯 Expected Behavior</h2>
+        <div class="test-content">
+            <h3>Persistent Hide State:</h3>
+            <ul>
+                <li>✅ FAB should stay hidden after page refresh</li>
+                <li>✅ Eye icon should appear when FAB is hidden</li>
+                <li>✅ FAB should stay visible after page refresh when shown</li>
+                <li>✅ State should persist across browser sessions</li>
+            </ul>
+            
+            <h3>Sound Toggle:</h3>
+            <ul>
+                <li>✅ Sound button should show 🔊 when enabled</li>
+                <li>✅ Sound button should show 🔇 when disabled</li>
+                <li>✅ Sound setting should persist after page refresh</li>
+                <li>✅ No sound should play when disabled</li>
+                <li>✅ Sound should work when enabled</li>
+            </ul>
+            
+            <h3>Keyboard Shortcuts:</h3>
+            <ul>
+                <li>✅ <span class="highlight">Alt+M</span> should toggle sound</li>
+                <li>✅ <span class="highlight">Alt+Shift+H</span> should toggle hide/show</li>
+                <li>✅ All shortcuts should work from any page state</li>
+                <li>✅ Shortcuts should provide visual feedback</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2 class="test-title">🐛 Troubleshooting</h2>
+        <div class="test-content">
+            <h3>If Hide State Doesn't Persist:</h3>
+            <ul>
+                <li>Check browser storage permissions</li>
+                <li>Verify extension has storage access</li>
+                <li>Check browser console for errors</li>
+            </ul>
+            
+            <h3>If Sound Toggle Doesn't Work:</h3>
+            <ul>
+                <li>Check if browser allows audio</li>
+                <li>Verify sound button updates correctly</li>
+                <li>Test with different actions that trigger sound</li>
+            </ul>
+            
+            <h3>If Keyboard Shortcuts Don't Work:</h3>
+            <ul>
+                <li>Make sure no other extension is using the same shortcuts</li>
+                <li>Check if page has focus</li>
+                <li>Try refreshing the page</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2 class="test-title">📊 Test Results</h2>
+        <div class="test-content">
+            <p>Use this section to track your test results:</p>
+            <ul>
+                <li>✅ <strong>Pass:</strong> Functionality works as expected</li>
+                <li>❌ <strong>Fail:</strong> Functionality doesn't work</li>
+                <li>⚠️ <strong>Partial:</strong> Some aspects work, others don't</li>
+            </ul>
+            
+            <h3>Test Summary:</h3>
+            <p id="test-summary">Run the tests above and update the status indicators.</p>
+            
+            <h3>Storage Check:</h3>
+            <p>Open browser DevTools → Application → Storage → Local Storage → Check for 'docweaver_preferences'</p>
+        </div>
+    </div>
+    
+    <script>
+        // Monitor for DocWeaver events and update test status
+        let testResults = {
+            hideFab: false,
+            refreshPage: false,
+            fabStillHidden: false,
+            showFab: false,
+            refreshAgain: false,
+            fabStillVisible: false,
+            disableSound: false,
+            testSoundDisabled: false,
+            refreshSound: false,
+            soundStillDisabled: false,
+            enableSound: false,
+            testSoundEnabled: false
+        };
+        
+        function updateTestStatus(testId, passed) {
+            const statusElement = document.getElementById(testId + '-status');
+            if (statusElement) {
+                if (passed) {
+                    statusElement.textContent = 'Pass';
+                    statusElement.className = 'status pass';
+                } else {
+                    statusElement.textContent = 'Fail';
+                    statusElement.className = 'status fail';
+                }
+            }
+        }
+        
+        // Check if FAB is visible
+        function checkFABVisibility() {
+            const fab = document.querySelector('#docweaver-container');
+            const isVisible = fab && fab.style.display !== 'none';
+            return isVisible;
+        }
+        
+        // Check if hide indicator is visible
+        function checkHideIndicator() {
+            const hideIndicator = document.getElementById('fab-hide-indicator');
+            const isVisible = hideIndicator && hideIndicator.style.display !== 'none';
+            return isVisible;
+        }
+        
+        // Monitor for changes
+        const observer = new MutationObserver(() => {
+            const fabVisible = checkFABVisibility();
+            const hideIndicatorVisible = checkHideIndicator();
+            
+            // Update test status based on current state
+            if (!fabVisible && hideIndicatorVisible) {
+                updateTestStatus('fab-still-hidden', true);
+                testResults.fabStillHidden = true;
+            } else if (fabVisible && !hideIndicatorVisible) {
+                updateTestStatus('fab-still-visible', true);
+                testResults.fabStillVisible = true;
+            }
+        });
+        
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true,
+            attributes: true,
+            attributeFilter: ['style', 'class']
+        });
+        
+        // Listen for keyboard events
+        document.addEventListener('keydown', (e) => {
+            if (e.altKey && e.shiftKey && e.key.toLowerCase() === 'h') {
+                updateTestStatus('hide-fab', true);
+                testResults.hideFab = true;
+            }
+            
+            if (e.altKey && e.key.toLowerCase() === 'm') {
+                updateTestStatus('disable-sound', true);
+                testResults.disableSound = true;
+            }
+        });
+        
+        // Update test summary
+        setInterval(() => {
+            const passedTests = Object.values(testResults).filter(Boolean).length;
+            const totalTests = Object.keys(testResults).length;
+            const summary = `Tests passed: ${passedTests}/${totalTests}`;
+            document.getElementById('test-summary').textContent = summary;
+        }, 1000);
+        
+        // Initial check
+        setTimeout(() => {
+            const fabVisible = checkFABVisibility();
+            const hideIndicatorVisible = checkHideIndicator();
+            
+            if (!fabVisible && hideIndicatorVisible) {
+                updateTestStatus('fab-still-hidden', true);
+                testResults.fabStillHidden = true;
+            } else if (fabVisible && !hideIndicatorVisible) {
+                updateTestStatus('fab-still-visible', true);
+                testResults.fabStillVisible = true;
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
