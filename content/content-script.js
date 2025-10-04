@@ -13,6 +13,8 @@ class DocWeaverContentScript {
     this.isActive = false;
     this.collectionCount = 0;
     this.selectionMode = false;
+    this.isHidden = false;
+    this.hideTimeout = null;
     
     this.init();
   }
@@ -49,6 +51,9 @@ class DocWeaverContentScript {
     container.id = 'docweaver-container';
     document.body.appendChild(container);
     
+    // Add hide/show functionality
+    this.setupHideShowFeatures();
+    
     // Create shadow root
     const shadow = container.attachShadow({ mode: 'closed' });
     
@@ -67,6 +72,10 @@ class DocWeaverContentScript {
           <button class="fab-action" id="fab-add" title="Add Page">+ Add</button>
           <button class="fab-action" id="fab-view" title="View Collection">👁️</button>
           <button class="fab-action" id="fab-generate" title="Generate PDF">✨ Create</button>
+          <button class="fab-action" id="fab-hide" title="Hide FAB">👁️‍🗨️ Hide</button>
+        </div>
+        <div class="fab-hide-indicator" id="fab-hide-indicator" style="display: none;">
+          <span class="hide-icon">👁️‍🗨️</span>
         </div>
       </div>
     `;
@@ -80,11 +89,64 @@ class DocWeaverContentScript {
     const addButton = this.fab.getElementById('fab-add');
     const viewButton = this.fab.getElementById('fab-view');
     const generateButton = this.fab.getElementById('fab-generate');
+    const hideButton = this.fab.getElementById('fab-hide');
+    const hideIndicator = this.fab.getElementById('fab-hide-indicator');
     
     mainButton.addEventListener('click', () => this.toggleActive());
     addButton.addEventListener('click', () => this.showCaptureModal());
     viewButton.addEventListener('click', () => this.openSidebar());
     generateButton.addEventListener('click', () => this.generatePDF());
+    hideButton.addEventListener('click', () => this.hideFAB());
+    hideIndicator.addEventListener('click', () => this.showFAB());
+  }
+  
+  setupHideShowFeatures() {
+    // Add mouse movement detection for auto-hide
+    let mouseTimer;
+    document.addEventListener('mousemove', () => {
+      if (this.isHidden) {
+        clearTimeout(mouseTimer);
+        mouseTimer = setTimeout(() => {
+          this.showFAB();
+        }, 2000); // Show after 2 seconds of mouse movement
+      }
+    });
+    
+    // Add keyboard shortcut for hide/show
+    document.addEventListener('keydown', (e) => {
+      if (e.altKey && e.shiftKey && e.key.toLowerCase() === 'h') {
+        e.preventDefault();
+        if (this.isHidden) {
+          this.showFAB();
+        } else {
+          this.hideFAB();
+        }
+      }
+    });
+  }
+  
+  hideFAB() {
+    const container = document.getElementById('docweaver-container');
+    const hideIndicator = this.fab.getElementById('fab-hide-indicator');
+    
+    if (container && hideIndicator) {
+      this.isHidden = true;
+      container.style.display = 'none';
+      hideIndicator.style.display = 'block';
+      this.showToast('FAB hidden. Move mouse or press Alt+Shift+H to show', 'info', 3000);
+    }
+  }
+  
+  showFAB() {
+    const container = document.getElementById('docweaver-container');
+    const hideIndicator = this.fab.getElementById('fab-hide-indicator');
+    
+    if (container && hideIndicator) {
+      this.isHidden = false;
+      container.style.display = 'block';
+      hideIndicator.style.display = 'none';
+      this.showToast('FAB shown', 'success', 2000);
+    }
   }
   
   setupKeyboardShortcuts() {
@@ -237,8 +299,20 @@ class DocWeaverContentScript {
     try {
       this.showToast('Capturing page...');
       
+      // Validate page content
+      if (!this.validatePageContent()) {
+        this.showToast('No content found on this page', 'warning');
+        return;
+      }
+      
       // Use the global extractor instead of dynamic import
       const content = await this.extractContent(mode);
+      
+      // Validate extracted content
+      if (!content.html || content.html.trim().length < 50) {
+        this.showToast('Insufficient content captured. Try a different mode.', 'warning');
+        return;
+      }
       
       // Debug logging
       console.log('Extracted content length:', content.html.length);
@@ -269,6 +343,18 @@ class DocWeaverContentScript {
       console.error('Error capturing page:', error);
       this.showToast('Error capturing page: ' + error.message, 'error');
     }
+  }
+  
+  validatePageContent() {
+    // Check if page has meaningful content
+    const body = document.body;
+    if (!body) return false;
+    
+    const textContent = body.textContent || body.innerText || '';
+    const cleanText = textContent.replace(/\s+/g, ' ').trim();
+    
+    // Require at least 100 characters of meaningful content
+    return cleanText.length > 100;
   }
   
   toggleSelectionMode() {
@@ -315,12 +401,14 @@ class DocWeaverContentScript {
   injectSidebar() {
     // Check if sidebar already exists
     if (document.querySelector('#docweaver-sidebar')) {
+      this.showSidebar();
       return;
     }
     
     // Create sidebar container
     const sidebarContainer = document.createElement('div');
     sidebarContainer.id = 'docweaver-sidebar';
+    sidebarContainer.style.display = 'none'; // Initially hidden
     sidebarContainer.innerHTML = `
       <div class="sidebar-overlay"></div>
       <div class="sidebar-content">
@@ -648,6 +736,216 @@ class DocWeaverContentScript {
     
     // Load and display collection
     this.loadSidebarCollection();
+  }
+  
+  showSidebar() {
+    const sidebar = document.querySelector('#docweaver-sidebar');
+    if (sidebar) {
+      sidebar.style.display = 'block';
+      sidebar.style.animation = 'sidebarSlideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+    }
+  }
+  
+  hideSidebar() {
+    const sidebar = document.querySelector('#docweaver-sidebar');
+    if (sidebar) {
+      sidebar.style.animation = 'sidebarSlideOut 0.3s ease-in forwards';
+      setTimeout(() => {
+        if (document.body.contains(sidebar)) {
+          document.body.removeChild(sidebar);
+        }
+      }, 300);
+    }
+  }
+  
+  async loadSidebarCollection() {
+    try {
+      const response = await browser.runtime.sendMessage({
+        action: 'getCollection'
+      });
+      
+      if (response.success) {
+        this.displaySidebarCollection(response.collection);
+      }
+    } catch (error) {
+      console.error('Error loading collection:', error);
+    }
+  }
+  
+  displaySidebarCollection(collection) {
+    const list = document.getElementById('sidebar-collection-list');
+    const pageCount = document.getElementById('sidebar-page-count');
+    const wordCount = document.getElementById('sidebar-word-count');
+    
+    if (!list || !pageCount || !wordCount) return;
+    
+    // Update stats
+    const pages = collection.pages || [];
+    pageCount.textContent = pages.length;
+    
+    const totalWords = pages.reduce((sum, page) => sum + (page.wordCount || 0), 0);
+    wordCount.textContent = totalWords.toLocaleString();
+    
+    // Update collection list
+    if (pages.length === 0) {
+      list.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">📚</div>
+          <div class="empty-text">No pages collected yet</div>
+          <div class="empty-subtext">Click the + button to add pages</div>
+        </div>
+      `;
+    } else {
+      list.innerHTML = pages.map((page, index) => `
+        <div class="page-item" data-page-id="${page.id}">
+          <div class="page-header">
+            <div class="page-title">${page.title}</div>
+            <div class="page-actions">
+              <button class="page-action view-page" title="View" data-page-id="${page.id}">
+                <span class="action-icon">👁️</span>
+              </button>
+              <button class="page-action edit-page" title="Edit" data-page-id="${page.id}">
+                <span class="action-icon">✏️</span>
+              </button>
+              <button class="page-action delete-page" title="Delete" data-page-id="${page.id}">
+                <span class="action-icon">🗑️</span>
+              </button>
+            </div>
+          </div>
+          <div class="page-meta">
+            <span class="page-type">${page.type}</span>
+            <span class="page-stats">${page.wordCount || 0} words • ${page.readTime || '0 min'}</span>
+          </div>
+        </div>
+      `).join('');
+      
+      // Add event listeners for page actions
+      this.setupPageActionListeners();
+    }
+  }
+  
+  setupPageActionListeners() {
+    const list = document.getElementById('sidebar-collection-list');
+    if (!list) return;
+    
+    // View page
+    list.querySelectorAll('.view-page').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const pageId = e.target.closest('[data-page-id]').dataset.pageId;
+        this.viewPage(pageId);
+      });
+    });
+    
+    // Edit page
+    list.querySelectorAll('.edit-page').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const pageId = e.target.closest('[data-page-id]').dataset.pageId;
+        this.editPage(pageId);
+      });
+    });
+    
+    // Delete page
+    list.querySelectorAll('.delete-page').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const pageId = e.target.closest('[data-page-id]').dataset.pageId;
+        this.deletePage(pageId);
+      });
+    });
+  }
+  
+  async viewPage(pageId) {
+    try {
+      const response = await browser.runtime.sendMessage({
+        action: 'getPage',
+        data: { pageId }
+      });
+      
+      if (response.success) {
+        // Open page in new tab
+        window.open(response.data.url, '_blank');
+      }
+    } catch (error) {
+      console.error('Error viewing page:', error);
+      this.showToast('Error viewing page', 'error');
+    }
+  }
+  
+  async editPage(pageId) {
+    const newTitle = prompt('Enter new title:', '');
+    if (newTitle && newTitle.trim()) {
+      try {
+        const response = await browser.runtime.sendMessage({
+          action: 'updatePage',
+          data: { pageId, title: newTitle.trim() }
+        });
+        
+        if (response.success) {
+          this.showToast('Page updated successfully');
+          this.loadSidebarCollection();
+        }
+      } catch (error) {
+        console.error('Error updating page:', error);
+        this.showToast('Error updating page', 'error');
+      }
+    }
+  }
+  
+  async deletePage(pageId) {
+    if (confirm('Are you sure you want to delete this page?')) {
+      try {
+        const response = await browser.runtime.sendMessage({
+          action: 'deletePage',
+          data: { pageId }
+        });
+        
+        if (response.success) {
+          this.showToast('Page deleted successfully');
+          this.loadSidebarCollection();
+        }
+      } catch (error) {
+        console.error('Error deleting page:', error);
+        this.showToast('Error deleting page', 'error');
+      }
+    }
+  }
+  
+  async generatePDF() {
+    try {
+      this.showToast('Generating PDF...');
+      
+      const response = await browser.runtime.sendMessage({
+        action: 'generatePDF'
+      });
+      
+      if (response.success) {
+        this.showToast('PDF generation started');
+        this.hideSidebar();
+      } else {
+        this.showToast('Error generating PDF', 'error');
+      }
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      this.showToast('Error generating PDF', 'error');
+    }
+  }
+  
+  async clearCollection() {
+    if (confirm('Are you sure you want to clear all pages? This action cannot be undone.')) {
+      try {
+        const response = await browser.runtime.sendMessage({
+          action: 'clearCollection'
+        });
+        
+        if (response.success) {
+          this.showToast('Collection cleared');
+          this.loadSidebarCollection();
+          this.updateCollectionCount(0);
+        }
+      } catch (error) {
+        console.error('Error clearing collection:', error);
+        this.showToast('Error clearing collection', 'error');
+      }
+    }
   }
   
   async loadSidebarCollection() {

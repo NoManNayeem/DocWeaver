@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DocWeaver End-to-End Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f8fafc;
+        }
+        
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .test-title {
+            color: #6366f1;
+            margin-bottom: 15px;
+        }
+        
+        .test-content {
+            margin-bottom: 15px;
+        }
+        
+        .code-block {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Fira Code', monospace;
+            overflow-x: auto;
+        }
+        
+        .article-content {
+            margin: 20px 0;
+        }
+        
+        .highlight {
+            background: #fef3c7;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        
+        .test-checklist {
+            background: #ecfdf5;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #10b981;
+        }
+        
+        .test-item {
+            margin: 8px 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .test-item input[type="checkbox"] {
+            margin-right: 10px;
+        }
+        
+        .status {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        
+        .status.pass {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .status.fail {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .status.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 DocWeaver End-to-End Test Page</h1>
+    <p>This page is designed to test all DocWeaver functionality comprehensively.</p>
+    
+    <div class="test-section">
+        <h2 class="test-title">📋 Test Checklist</h2>
+        <div class="test-checklist">
+            <div class="test-item">
+                <input type="checkbox" id="fab-visible">
+                <label for="fab-visible">FAB (Floating Action Button) is visible</label>
+                <span class="status pending" id="fab-status">Pending</span>
+            </div>
+            <div class="test-item">
+                <input type="checkbox" id="fab-interactive">
+                <label for="fab-interactive">FAB responds to clicks</label>
+                <span class="status pending" id="fab-interactive-status">Pending</span>
+            </div>
+            <div class="test-item">
+                <input type="checkbox" id="capture-modes">
+                <label for="capture-modes">All capture modes work (Full Page, Smart Selection, Article Only, Code Only)</label>
+                <span class="status pending" id="capture-modes-status">Pending</span>
+            </div>
+            <div class="test-item">
+                <input type="checkbox" id="sidebar-function">
+                <label for="sidebar-function">Sidebar opens and displays collection</label>
+                <span class="status pending" id="sidebar-status">Pending</span>
+            </div>
+            <div class="test-item">
+                <input type="checkbox" id="hide-show">
+                <label for="hide-show">Hide/Show FAB functionality works</label>
+                <span class="status pending" id="hide-show-status">Pending</span>
+            </div>
+            <div class="test-item">
+                <input type="checkbox" id="keyboard-shortcuts">
+                <label for="keyboard-shortcuts">Keyboard shortcuts work (Alt+A, Alt+S, Alt+V, Alt+G, Alt+Shift+H)</label>
+                <span class="status pending" id="keyboard-status">Pending</span>
+            </div>
+            <div class="test-item">
+                <input type="checkbox" id="toast-notifications">
+                <label for="toast-notifications">Toast notifications appear with sound effects</label>
+                <span class="status pending" id="toast-status">Pending</span>
+            </div>
+            <div class="test-item">
+                <input type="checkbox" id="pdf-generation">
+                <label for="pdf-generation">PDF generation works</label>
+                <span class="status pending" id="pdf-status">Pending</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2 class="test-title">📄 Full Page Content Test</h2>
+        <div class="test-content">
+            <p>This section tests the "Full Page" capture mode. It should capture all content including this text, the code blocks below, and the images.</p>
+            
+            <h3>Sample Article Content</h3>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
+            
+            <h3>Code Examples</h3>
+            <div class="code-block">
+                <pre><code>// JavaScript example
+function greetUser(name) {
+    return `Hello, ${name}!`;
+}
+
+const user = "DocWeaver User";
+console.log(greetUser(user));</code></pre>
+            </div>
+            
+            <div class="code-block">
+                <pre><code>/* CSS example */
+.docweaver-fab {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+    border-radius: 50%;
+    cursor: pointer;
+}</code></pre>
+            </div>
+            
+            <h3>Important Information</h3>
+            <p class="highlight">This highlighted text should be captured with the full page content.</p>
+            
+            <ul>
+                <li>List item 1: Testing bullet points</li>
+                <li>List item 2: Another test item</li>
+                <li>List item 3: Final test item</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2 class="test-title">✂️ Smart Selection Test</h2>
+        <div class="test-content">
+            <p>Use the Smart Selection mode to capture specific sections. Try selecting:</p>
+            <ul>
+                <li>This entire test section</li>
+                <li>Just the code blocks below</li>
+                <li>Individual paragraphs</li>
+            </ul>
+            
+            <div class="code-block">
+                <pre><code>// Smart selection test code
+const smartSelection = {
+    mode: 'selection',
+    elements: document.querySelectorAll('.selected'),
+    content: 'Captured content'
+};</code></pre>
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2 class="test-title">📝 Article Only Test</h2>
+        <div class="test-content">
+            <p>This section should be captured cleanly by the "Article Only" mode, removing navigation and focusing on the main content.</p>
+            
+            <h3>Main Article Content</h3>
+            <p>This is the main article content that should be captured. It contains meaningful text that represents the core information of the page.</p>
+            
+            <p>Additional paragraphs provide more context and detail about the topic being discussed. This content should be preserved in the article-only capture mode.</p>
+            
+            <blockquote>
+                <p>"This is a blockquote that should be captured as part of the article content."</p>
+            </blockquote>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2 class="test-title">💻 Code Only Test</h2>
+        <div class="test-content">
+            <p>The following code blocks should be captured by the "Code Only" mode:</p>
+            
+            <div class="code-block">
+                <pre><code>// JavaScript function
+function processData(data) {
+    const processed = data.map(item => ({
+        id: item.id,
+        name: item.name.toUpperCase(),
+        timestamp: new Date().toISOString()
+    }));
+    
+    return processed.filter(item => item.name.length > 0);
+}</code></pre>
+            </div>
+            
+            <div class="code-block">
+                <pre><code># Python example
+def calculate_fibonacci(n):
+    if n <= 1:
+        return n
+    return calculate_fibonacci(n-1) + calculate_fibonacci(n-2)
+
+# Test the function
+for i in range(10):
+    print(f"F({i}) = {calculate_fibonacci(i)}")</code></pre>
+            </div>
+            
+            <div class="code-block">
+                <pre><code>/* HTML structure */
+<div class="container">
+    <header>
+        <h1>Page Title</h1>
+    </header>
+    <main>
+        <article>
+            <h2>Article Title</h2>
+            <p>Article content goes here.</p>
+        </article>
+    </main>
+</div></code></pre>
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2 class="test-title">🎯 UX Test Scenarios</h2>
+        <div class="test-content">
+            <h3>Test Scenarios:</h3>
+            <ol>
+                <li><strong>Basic Capture:</strong> Click FAB → Select "Full Page" → Verify capture</li>
+                <li><strong>Smart Selection:</strong> Click FAB → Select "Smart Selection" → Click on content → Verify selection</li>
+                <li><strong>Collection Management:</strong> Add multiple pages → Open sidebar → Verify display</li>
+                <li><strong>Hide/Show FAB:</strong> Click hide button → Verify FAB disappears → Move mouse → Verify FAB reappears</li>
+                <li><strong>Keyboard Shortcuts:</strong> Test Alt+A, Alt+S, Alt+V, Alt+G, Alt+Shift+H</li>
+                <li><strong>Error Handling:</strong> Try capturing empty page → Verify error message</li>
+                <li><strong>PDF Generation:</strong> Add pages → Generate PDF → Verify process</li>
+            </ol>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2 class="test-title">🔧 Performance Test</h2>
+        <div class="test-content">
+            <p>This section contains a large amount of content to test performance:</p>
+            
+            <div id="performance-content">
+                <!-- Large content will be generated here -->
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Generate large content for performance testing
+        function generatePerformanceContent() {
+            const container = document.getElementById('performance-content');
+            let content = '';
+            
+            for (let i = 1; i <= 100; i++) {
+                content += `
+                    <h4>Section ${i}</h4>
+                    <p>This is paragraph ${i} of the performance test content. It contains enough text to test the extension's ability to handle large amounts of content efficiently.</p>
+                    <div class="code-block">
+                        <pre><code>// Code block ${i}
+function testFunction${i}() {
+    console.log('Testing performance with large content');
+    return 'Result ${i}';
+}</code></pre>
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = content;
+        }
+        
+        // Initialize performance test
+        generatePerformanceContent();
+        
+        // Test status tracking
+        function updateTestStatus(testId, passed) {
+            const statusElement = document.getElementById(testId + '-status');
+            const checkbox = document.getElementById(testId);
+            
+            if (passed) {
+                statusElement.textContent = 'Pass';
+                statusElement.className = 'status pass';
+                checkbox.checked = true;
+            } else {
+                statusElement.textContent = 'Fail';
+                statusElement.className = 'status fail';
+            }
+        }
+        
+        // Monitor for DocWeaver events
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check if FAB is visible
+            setTimeout(() => {
+                const fab = document.querySelector('#docweaver-container');
+                updateTestStatus('fab-visible', !!fab);
+            }, 1000);
+        });
+        
+        // Listen for DocWeaver messages
+        window.addEventListener('message', (event) => {
+            if (event.data && event.data.source === 'docweaver') {
+                console.log('DocWeaver message received:', event.data);
+            }
+        });
+    </script>
+</body>
+</html>

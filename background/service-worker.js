@@ -31,6 +31,22 @@ browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
       handleOpenSidebar(message, sender, sendResponse);
       return true;
       
+    case 'getPage':
+      handleGetPage(message, sendResponse);
+      return true;
+      
+    case 'updatePage':
+      handleUpdatePage(message, sendResponse);
+      return true;
+      
+    case 'deletePage':
+      handleDeletePage(message, sendResponse);
+      return true;
+      
+    case 'clearCollection':
+      handleClearCollection(message, sendResponse);
+      return true;
+      
     default:
       console.warn('Unknown message action:', message.action);
       sendResponse({ success: false, error: 'Unknown action' });
@@ -181,6 +197,69 @@ function calculateReadTime(wordCount) {
   const wordsPerMinute = 200;
   const minutes = Math.ceil(wordCount / wordsPerMinute);
   return minutes === 1 ? '1 min' : `${minutes} min`;
+}
+
+// Handle get page
+async function handleGetPage(message, sendResponse) {
+  try {
+    const { pageId } = message.data;
+    const collection = await getCollection();
+    const page = collection.pages.find(p => p.id === pageId);
+    
+    if (page) {
+    sendResponse({ success: true, data: page });
+    } else {
+    sendResponse({ success: false, error: 'Page not found' });
+    }
+  } catch (error) {
+    console.error('Error getting page:', error);
+    sendResponse({ success: false, error: error.message });
+  }
+}
+
+// Handle update page
+async function handleUpdatePage(message, sendResponse) {
+  try {
+    const { pageId, title } = message.data;
+    const collection = await getCollection();
+    const pageIndex = collection.pages.findIndex(p => p.id === pageId);
+    
+    if (pageIndex !== -1) {
+      collection.pages[pageIndex].title = title;
+      await saveCollection(collection);
+      sendResponse({ success: true });
+    } else {
+      sendResponse({ success: false, error: 'Page not found' });
+    }
+  } catch (error) {
+    console.error('Error updating page:', error);
+    sendResponse({ success: false, error: error.message });
+  }
+}
+
+// Handle delete page
+async function handleDeletePage(message, sendResponse) {
+  try {
+    const { pageId } = message.data;
+    const collection = await getCollection();
+    collection.pages = collection.pages.filter(p => p.id !== pageId);
+    await saveCollection(collection);
+    sendResponse({ success: true });
+  } catch (error) {
+    console.error('Error deleting page:', error);
+    sendResponse({ success: false, error: error.message });
+  }
+}
+
+// Handle clear collection
+async function handleClearCollection(message, sendResponse) {
+  try {
+    await browser.storage.local.remove(['collection']);
+    sendResponse({ success: true });
+  } catch (error) {
+    console.error('Error clearing collection:', error);
+    sendResponse({ success: false, error: error.message });
+  }
 }
 
 // Context menu setup
